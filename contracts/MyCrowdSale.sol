@@ -203,4 +203,8 @@ contract MyCrowdSale is Context, ReentrancyGuard {
     function _forwardFunds() internal virtual {
         _wallet.transfer(msg.value);
     }
+
+    function getRate() public view returns(uint256){
+        return _rate;
+    }
 }

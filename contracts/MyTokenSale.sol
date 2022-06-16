@@ -12,4 +12,6 @@ contract MyTokenSale is MyCrowdSale {
     )  MyCrowdSale(rate, wallet, token) {
 
     }
+
+
 }
