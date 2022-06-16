@@ -1,7 +1,7 @@
 require("dotenv").config({path: "../.env"});
 const MyToken = artifacts.require("MyToken");
 const MyTokenSale = artifacts.require("MyTokenSale");
-
+const KycContract = artifacts.require("KycContract");
 const chai = require("./setupChai.js"); 
 const BigNumber = web3.utils.BN;
 const expect = chai.expect;
@@ -65,6 +65,9 @@ contract ("TokenSale Test", async (accounts) => {
     it("should be possible to buy tokens (my version)", async() => {
         const weiAmountToSend = new BigNumber(1000);
         const tokenAmountSent = new BigNumber (weiAmountToSend * process.env.RATE_TO_WEI);
+        let kycInstance = await KycContract.deployed();
+        //add anotherAccount in the whitelist
+        await kycInstance.setKycCompleted(anotherAccount, {from: deployerAccount});
         let instance = await MyToken.deployed();
         let instanceTokenSale = await MyTokenSale.deployed();
         let initialTokenBalance = await instance.balanceOf(instanceTokenSale.address);
