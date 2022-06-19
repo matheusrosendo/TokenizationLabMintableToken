@@ -33,6 +33,16 @@ const getWeb3 = () =>
         resolve(web3);
       }
     });
+
+    //refresh page if account is changed
+    window.ethereum.on('accountsChanged', function (accounts) {
+      window.location.reload();
+    })
+    
+    //refresh page if chain is changed
+    window.ethereum.on('chainChanged', () => {
+      window.location.reload();
+    })
   });
 
 export default getWeb3;

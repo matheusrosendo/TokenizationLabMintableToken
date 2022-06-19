@@ -14,9 +14,20 @@ contract KycContract is Ownable {
         allowed[_addr] = false;
     }
 
-    function kycCompleted(address _addr) public view returns(bool){
+    function kycCompleted(address _addr) public view onlyOwner returns(bool) {
         return allowed[_addr];
     }
+    
+    function setMultipleAddressWhitelist(address[] calldata  _addresses) external onlyOwner {
+        for(uint i = 0; i < _addresses.length; i++){
+            allowed[_addresses[i]] = true;
+        }
+    }
 
+    function setMultipleAddressRevoke(address[] calldata  _addresses) external onlyOwner {
+        for(uint i = 0; i < _addresses.length; i++){
+            allowed[_addresses[i]] = false;
+        }
+    }
 
 }
