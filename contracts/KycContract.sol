@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract KycContract is Ownable {
     mapping(address => bool) allowed;
 
-    function setKycCompleted(address _addr)  public onlyOwner{
+    function setKycWhitelisted(address _addr)  public onlyOwner{
         allowed[_addr] = true;
     }
 
@@ -14,7 +14,7 @@ contract KycContract is Ownable {
         allowed[_addr] = false;
     }
 
-    function kycCompleted(address _addr) public view onlyOwner returns(bool) {
+    function kycWhitelisted(address _addr) public view returns(bool) {
         return allowed[_addr];
     }
     

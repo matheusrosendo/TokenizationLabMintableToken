@@ -47,13 +47,15 @@ class App extends Component {
       let owner = await this.instanceKycContract.methods.owner().call();
       
       //verify if current address is whitelisted
-      this.isWhitelisted = await this.instanceKycContract.methods.kycCompleted(this.accounts[0]).call();
+      this.isWhitelisted = await this.instanceKycContract.methods.kycWhitelisted(this.accounts[0]).call();
       let inCappuAccountAmmount = await this.instanceMyToken.methods.balanceOf(this.accounts[0]).call();
       let inEthAccountAmmount = await this.web3.eth.getBalance(this.accounts[0]);
 
       this.setState({ loaded: true, contractOwner: owner===this.accounts[0], whitelisted: this.isWhitelisted, ethAccountAmmount:inEthAccountAmmount, cappuAccountAmmount: inCappuAccountAmmount, whitelistAddress: true });
      
     } catch (error) {
+      console.log(error);
+      this.erroConnect = error;
       // Catch any errors for any of the above operations.
       alert(
         `Failed to load web3, accounts, or contract. Check console for details.`,
@@ -112,7 +114,7 @@ class App extends Component {
 
   handleKycWhiteListing = async () => {
     if(this.state.isToWhitelist === "allow"){
-      await this.instanceKycContract.methods.setKycCompleted(this.state.kycAddress).send({from: this.accounts[0]})
+      await this.instanceKycContract.methods.setKycWhitelisted(this.state.kycAddress).send({from: this.accounts[0]})
       .on('transactionHash', function(hash){
         document.getElementById("transactionHash").innerHTML = hash;
       })
@@ -188,7 +190,7 @@ class App extends Component {
     if (!this.state.loaded) {
       return (
        <div className="container"> 
-         <div className="plaintext">Loading Web3, accounts, and contract...</div>;
+         <div className="plaintext">Loading Web3, accounts, and contract...</div>
        </div>
       )
     } else {

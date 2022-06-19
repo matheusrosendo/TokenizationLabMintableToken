@@ -9,7 +9,7 @@ module.exports = async function(deployer){
     await deployer.deploy(KycContract);
     let kycInstance = await KycContract.deployed();
     //add the deployer address to the whitelist
-    await kycInstance.setKycCompleted(addr[0], {from: addr[0]});
+    await kycInstance.setKycWhitelisted(addr[0], {from: addr[0]});
     await deployer.deploy(MyToken, maxSupply);
     await deployer.deploy(MyTokenSale, 1, addr[0], MyToken.address, KycContract.address);
     let instance = await MyToken.deployed();

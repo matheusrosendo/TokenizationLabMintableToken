@@ -48,10 +48,11 @@ contract ("TokenSale Test", async (accounts) => {
         let initialBalancoTokenSaleAddress = await tokenInstance.balanceOf(tokenSaleInstance.address);
         console.log("initialbalacoCappuTokenSalaAdress= "+ initialBalancoTokenSaleAddress.toString());
          */
-       
+
+        console.log("deployerAccount "+deployerAccount);
         //não funcionou sem o await, tive que inserir por conta
         await expect(tokenSaleInstance.sendTransaction({from: deployerAccount, value: web3.utils.toWei("1", "wei")})).to.be.fulfilled;
-        
+       
        /*  let deployerAccountAfterBalance = await web3.eth.getBalance(deployerAccount);
         console.log("deployerAccountAfterBalance   = "+deployerAccountAfterBalance.toString());
         let novoBalancoDeployerAccount = await tokenInstance.balanceOf(deployerAccount);
@@ -67,7 +68,7 @@ contract ("TokenSale Test", async (accounts) => {
         const tokenAmountSent = new BigNumber (weiAmountToSend * process.env.RATE_TO_WEI);
         let kycInstance = await KycContract.deployed();
         //add anotherAccount in the whitelist
-        await kycInstance.setKycCompleted(anotherAccount, {from: deployerAccount});
+        await kycInstance.setKycWhitelisted(anotherAccount, {from: deployerAccount});
         let instance = await MyToken.deployed();
         let instanceTokenSale = await MyTokenSale.deployed();
         let initialTokenBalance = await instance.balanceOf(instanceTokenSale.address);

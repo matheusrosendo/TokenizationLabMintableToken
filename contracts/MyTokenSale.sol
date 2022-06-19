@@ -7,7 +7,8 @@ import "./KycContract.sol";
 
 contract MyTokenSale is MyCrowdSale {
     KycContract kyc;
-   
+    address public owner;
+
     constructor(
         uint256 rate,    // rate in TKNbits
         address payable wallet,
@@ -15,12 +16,13 @@ contract MyTokenSale is MyCrowdSale {
         KycContract _kyc
     )  MyCrowdSale(rate, wallet, token) {
         kyc = _kyc;
+        owner = msg.sender;
     }
 
     function _preValidatePurchase(address _beneficiary, uint256 _weiAmount) internal view override {
         super._preValidatePurchase(_beneficiary, _weiAmount);
        
-        require(kyc.kycCompleted(msg.sender), "Not in the whitelist!");
+        require(kyc.kycWhitelisted(msg.sender), "Not in the whitelist!");
 
     }
 
