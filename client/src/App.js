@@ -7,10 +7,10 @@ import getWeb3 from "./getWeb3";
 import "./App.css";
 
 class App extends Component {
-  state = { loaded: false, contractOwner: false, whitelisted: false, kycAddress:"", ethAmountToBuyToken:1000, ethAccountAmmount:0, cappuAccountAmmount:0, isToWhitelist: "allow"};
+  state = { loaded: false, contractOwner: false, whitelisted: false, kycAddress:"", ethAmountToBuyToken:1000, ethAccountAmmount:0, cappuAccountAmmount:0, isToWhitelist: "allow", errorMessage: ""};
 
-   //put the instance in a window to be acessed externaly
-   constructor(props) {
+  //put the instance in a window to be acessed externaly
+  constructor(props) {
       super(props);
       window.reactInstance = this;
   }
@@ -51,16 +51,13 @@ class App extends Component {
       let inCappuAccountAmmount = await this.instanceMyToken.methods.balanceOf(this.accounts[0]).call();
       let inEthAccountAmmount = await this.web3.eth.getBalance(this.accounts[0]);
 
-      this.setState({ loaded: true, contractOwner: owner===this.accounts[0], whitelisted: this.isWhitelisted, ethAccountAmmount:inEthAccountAmmount, cappuAccountAmmount: inCappuAccountAmmount, whitelistAddress: true });
+      this.setState({ loaded: true, contractOwner: owner===this.accounts[0], whitelisted: this.isWhitelisted, ethAccountAmmount:inEthAccountAmmount, cappuAccountAmmount: inCappuAccountAmmount, whitelistAddress: true, errorMessage:"" });
      
     } catch (error) {
-      console.log(error);
-      this.erroConnect = error;
-      // Catch any errors for any of the above operations.
       alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
+        'Failed to load web3, accounts, or contract. Check console for details. Error: '+error.message
       );
-      console.error(error);
+      this.handleError(error.message);
     }
   };
 
@@ -98,7 +95,6 @@ class App extends Component {
     })
     .on('error', function(error, receipt) {
       
-      window.errorBuyToken = error;
       let errorMessage = "";
       try {
         //slice returned error to get only message inside
@@ -106,57 +102,63 @@ class App extends Component {
       } catch (error) {
         errorMessage = error.message;
       }
-      
-      document.getElementById("error").innerHTML = errorMessage;
+      self.handleError({errorMessage: errorMessage});
       
     });
   }
 
   handleKycWhiteListing = async () => {
-    if(this.state.isToWhitelist === "allow"){
-      await this.instanceKycContract.methods.setKycWhitelisted(this.state.kycAddress).send({from: this.accounts[0]})
-      .on('transactionHash', function(hash){
-        document.getElementById("transactionHash").innerHTML = hash;
-      })
-      .on('receipt', function(receipt){
-        document.getElementById("receipt").innerHTML = receipt.blockHash;
-        window.receiptTrans = receipt;
-      })
-      .on('confirmation', function(confirmationNumber, receipt){
-        document.getElementById("confirmation").innerHTML = "Number of confirmations: "+confirmationNumber;
-        document.getElementById("infoMessage").innerHTML =  this.state.kycAddress+ " was whitelisted successfully";
-      })
-      .on('error', function(error, receipt) {
-        //slice returned error to get only message inside
-        var errorMessage = JSON.parse(error.message.slice(58, error.message.length-2));
-        document.getElementById("error").innerHTML = errorMessage.data.message;
-        window.error = error;
-      });
-          
-    } else { //revoke address
-      await this.instanceKycContract.methods.setKycRevoked(this.state.kycAddress).send({from: this.accounts[0]})
-      .on('transactionHash', function(hash){
-        document.getElementById("transactionHash").innerHTML = hash;
-      })
-      .on('receipt', function(receipt){
-        document.getElementById("receipt").innerHTML = receipt.blockHash;
-        window.receiptTrans = receipt;
-      })
-      .on('confirmation', function(confirmationNumber, receipt){
-        document.getElementById("confirmation").innerHTML = "Number of confirmations"+confirmationNumber;
-        document.getElementById("infoMessage").innerHTML = this.state.kycAddress+ " was revoked from whitelist";
-      })
-      .on('error', function(error, receipt) {
-        //slice returned error to get only message inside
-        var errorMessage = JSON.parse(error.message.slice(58, error.message.length-2));
-        document.getElementById("error").innerHTML = errorMessage.data.message;
-        window.error = error;
-      });
+    //in order to get global access inside the callback function 
+    let self = this;
+    try {
       
+      if(this.state.isToWhitelist === "allow"){
+      
+        await this.instanceKycContract.methods.setKycWhitelisted(this.state.kycAddress).send({from: this.accounts[0]})
+        .on('transactionHash', function(hash){
+          document.getElementById("transactionHash").innerHTML = hash;
+        })
+        .on('receipt', function(receipt){
+          document.getElementById("receipt").innerHTML = receipt.blockHash;
+        })
+        .on('confirmation', function(confirmationNumber, receipt){
+          document.getElementById("confirmation").innerHTML = "Number of confirmations: "+confirmationNumber;
+          document.getElementById("infoMessage").innerHTML =  self.state.kycAddress+ " was whitelisted successfully";
+        })
+        .on('error', function(error, receipt) {
+          //slice returned error to get only message inside
+          var errorMessage = JSON.parse(error.message.slice(58, error.message.length-2));
+          self.handleError(errorMessage.data.message);
+        });
+            
+      } else { //revoke address
+        await this.instanceKycContract.methods.setKycRevoked(this.state.kycAddress).send({from: this.accounts[0]})
+        .on('transactionHash', function(hash){
+          document.getElementById("transactionHash").innerHTML = hash;
+        })
+        .on('receipt', function(receipt){
+          document.getElementById("receipt").innerHTML = receipt.blockHash;
+        })
+        .on('confirmation', function(confirmationNumber, receipt){
+          document.getElementById("confirmation").innerHTML = "Number of confirmations"+confirmationNumber;
+          document.getElementById("infoMessage").innerHTML = self.state.kycAddress+ " was revoked from whitelist";
+        })
+        .on('error', function(error, receipt) {
+          //slice returned error to get only message inside
+          var errorMessage = JSON.parse(error.message.slice(58, error.message.length-2));
+          self.handleError(errorMessage.data.message);
+        });
+        
+      }
+    } catch (error) {
+        this.handleError(error);
     }
   }
 
-
+handleError = (_errorMessage) =>{
+  document.getElementById("error").innerHTML = _errorMessage;
+  this.setState({errorMessage: _errorMessage});
+}
 
  addTokenToMetamask = async () =>{
     try {
@@ -176,12 +178,12 @@ class App extends Component {
         }
       });
       if(tokenAdded){
-        console.log(tokenAdded+ " adicionado com sucesso");
+        document.getElementById("infoMessage").innerHTML = symbol+ " adicionado com sucesso";
       } else {
-        console.log(tokenAdded+ " nao foi possivel adicionar o token");
+        document.getElementById("infoMessage").innerHTML = symbol+ " nao foi possivel adicionar o token";
       }
     } catch (error) {
-      console.log(error);
+      this.handleError(error);
     }
  }
 
@@ -200,8 +202,7 @@ class App extends Component {
             <div  className="plaintext">connected account: {this.accounts[0]}</div>
             <div className="container"> 
              
-              <div className="form">
-              
+              <div className="form">              
                 <div className="title">StarDucks Cappucino IDO</div>
                 <div className="subtitle">Welcome manager! This is your Kyc Whitelisting page.</div>
                 <div className="input-container ic1">
@@ -262,8 +263,14 @@ class App extends Component {
             );
         } else {
           return (
-            <div className="container"> 
-              <div className="warning">Sorry, you are not whitelisted!</div>
+            <div>
+              <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / CAPPU: {this.state.cappuAccountAmmount} </div>
+              <div className="container"> 
+                <div className="form2">
+                  <div className="title">StarDucks Cappucino IDO</div>
+                  <div className="subtitle">Sorry, you are not whitelisted!</div>
+                </div>
+              </div>
             </div>
           );
         }
