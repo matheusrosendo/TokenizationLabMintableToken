@@ -24,6 +24,12 @@ module.exports = {
       },
       network_id: "1337"
     },
+    ropsten_infura: {
+      provider: function() {
+        return new HDWalletProvider(process.env.MNEMONIC, "https://ropsten.infura.io/v3/2b87a1cd9a75478288b5a54b40c62cdc", AccountIndex)
+      },
+      network_id: "3"
+    }
   },
   compilers: {
     solc: {
