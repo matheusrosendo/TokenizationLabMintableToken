@@ -48,10 +48,13 @@ class App extends Component {
       
       //verify if current address is whitelisted
       this.isWhitelisted = await this.instanceKycContract.methods.kycWhitelisted(this.accounts[0]).call();
-      let inCappuAccountAmmount = await this.instanceMyToken.methods.balanceOf(this.accounts[0]).call();
-      let inEthAccountAmmount = await this.web3.eth.getBalance(this.accounts[0]);
+      
+      //takes the balances on loading page
+      await this.updateUserTokens();
 
-      this.setState({ loaded: true, contractOwner: owner===this.accounts[0], whitelisted: this.isWhitelisted, ethAccountAmmount:inEthAccountAmmount, cappuAccountAmmount: inCappuAccountAmmount, whitelistAddress: true, errorMessage:"" });
+      //refresh balances every event Transfer
+      await this.listenToTokenTransfer();
+      this.setState({ loaded: true, contractOwner: owner===this.accounts[0], whitelisted: this.isWhitelisted, whitelistAddress: true, errorMessage:"" });
      
     } catch (error) {
       alert(
@@ -61,20 +64,21 @@ class App extends Component {
     }
   };
 
+  /**
+   * Handle form inputs on change
+   * @param {*} event 
+   */
+
   handleInputChange = (event) => {
      const target = event.target;
      const value = target.type === "checkbox" ? target.checked : target.value;
      const name = target.name;
      this.setState({[name]: value});
   }
-
-  handleInputChangeBuyToken = (event) => {
-    const target = event.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    const name = target.name;
-    this.setState({[name]: value});
- }
  
+  /**
+   * handle buy token function
+   */
  handleBuyToken = async () => {
     //in order to get global access inside the callback function 
     let self = this;
@@ -88,9 +92,6 @@ class App extends Component {
     })
     .on('confirmation', async function(confirmationNumber, receipt){
       document.getElementById("confirmation").innerHTML = "Number of confirmations: "+confirmationNumber;
-      let inCappuAccountAmmount = await self.instanceMyToken.methods.balanceOf(self.accounts[0]).call();
-      let inEthAccountAmmount = await self.web3.eth.getBalance(self.accounts[0]);
-      self.setState({ethAccountAmmount:inEthAccountAmmount, cappuAccountAmmount: inCappuAccountAmmount });
       document.getElementById("infoMessage").innerHTML = self.state.kycAddress+ " Tokens bought successfully";
     })
     .on('error', function(error, receipt) {
@@ -107,12 +108,13 @@ class App extends Component {
     });
   }
 
+  /**
+   * Whitelist handler: allow a given address to buy tokens (Owner only)
+   */
   handleKycWhiteListing = async () => {
     //in order to get global access inside the callback function 
     let self = this;
     try {
-      //let inAddresses = this.state.kycAddresses.split(",");
-      //var getData = myContract.passAddress.getData([address1,address2,address3]);
               
       if(this.state.isToWhitelist === "allow"){
         //self.inAddressArray = this.state.kycAddresses.split(",");
@@ -157,6 +159,10 @@ class App extends Component {
     }
   }
 
+/**
+ * Generic display of errors
+ * @param {*} _errorMessage 
+ */
 handleError = (_errorMessage) =>{
   try {
     document.getElementById("error").innerHTML = _errorMessage;
@@ -166,6 +172,9 @@ handleError = (_errorMessage) =>{
   }  
 }
 
+/**
+ * Button ADD Token to metamask handler
+ */
 addTokenToMetamask = async () =>{
     try {
       const symbol = await this.instanceMyToken.methods.symbol().call();
@@ -193,6 +202,27 @@ addTokenToMetamask = async () =>{
     }
  }
 
+ /**
+  * Refresh balances of ETH and CAPPU tokens and set to state
+  */
+ updateUserTokens = async () => {
+  let inCappuAccountAmmount = await this.instanceMyToken.methods.balanceOf(this.accounts[0]).call();
+  let inEthAccountAmmount = this.web3.utils.fromWei(await this.web3.eth.getBalance(this.accounts[0]), 'ether'); 
+  let inEthAccountAmmountInString = "0.0";
+  if(inEthAccountAmmount > 0) {
+    inEthAccountAmmountInString = inEthAccountAmmount.substring(0,5);
+  }
+  this.setState({ ethAccountAmmount:inEthAccountAmmountInString, cappuAccountAmmount: inCappuAccountAmmount});
+ }
+
+ /**
+  * Refresh balances every time event Transfer is listened sendind from or to the current address 
+  */
+ listenToTokenTransfer = async() => {
+   this.instanceMyToken.events.Transfer({to: this.accounts[0]}).on("data", this.updateUserTokens);
+   this.instanceMyToken.events.Transfer({from: this.accounts[0]}).on("data", this.updateUserTokens);
+ }
+
   render() {
    
     if (!this.state.loaded) {
@@ -205,7 +235,7 @@ addTokenToMetamask = async () =>{
       if(this.state.contractOwner){
         return (
           <div>
-            <div  className="plaintext">connected account: {this.accounts[0]}</div>
+           <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / CAPPU: {this.state.cappuAccountAmmount} </div>
             <div className="container"> 
              
               <div className="form">              
@@ -224,11 +254,7 @@ addTokenToMetamask = async () =>{
                   <div className="cut"></div>
                   <label className="placeholder">Address (0x123...)</label>
                 </div>
-                {/* <div className="input-container ic2">
-                  <textarea className="input" type="text" placeholder=""  name="kycAddresses" value={this.state.kycAddresses} onChange={this.handleInputChange} />
-                  <div className="cut"></div>
-                  <label className="placeholder">Addresses (0x123, 0x456, 0x567)</label>
-                </div> */}
+                
                 <button type="button" className="submit" onClick={this.handleKycWhiteListing}>Update KYC Whitelist</button>
               </div>
                
@@ -252,16 +278,14 @@ addTokenToMetamask = async () =>{
                     <div className="subtitle">You are whitelisted!</div>
                
                     <div className="input-container ic1">
-                      <input id="firstname" className="input" type="text" placeholder="" name="ethAmountToBuyToken" value={this.state.ethAmountToBuyToken} onChange={this.handleInputChangeBuyToken} />
+                      <input id="firstname" className="input" type="text" placeholder="" name="ethAmountToBuyToken" value={this.state.ethAmountToBuyToken} onChange={this.handleInputChange} />
                       <div className="cut"></div>
                       <label className="placeholder">ETH amount in wei</label>
-                    </div>
-                    
+                    </div>                    
                     <p>
                       <button type="button"  className="submit" onClick={this.handleBuyToken}> Buy CAPPU Token</button>
                       <button type="button"  id="addToken"  className="submit" onClick={this.addTokenToMetamask}> Add CAPPU Token to metamask wallet</button>
-                    </p>
-                    
+                    </p>                    
                   </div>  
                   <div className="warning" id="infoMessage"></div>
                   <div className="plaintext" id="transactionHash">transactionHash</div>
@@ -270,7 +294,6 @@ addTokenToMetamask = async () =>{
                   <div className="warning" id="error"></div>
                 </div>     
               </div>
-
             );
         } else {
           return (
