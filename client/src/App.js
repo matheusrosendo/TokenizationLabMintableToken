@@ -57,7 +57,7 @@ class App extends Component {
       alert(
         'Failed to load web3, accounts, or contract. Check console for details. Error: '+error.message
       );
-      this.handleError(error.message);
+      this.handleError(error);
     }
   };
 
@@ -111,9 +111,11 @@ class App extends Component {
     //in order to get global access inside the callback function 
     let self = this;
     try {
-      
+      //let inAddresses = this.state.kycAddresses.split(",");
+      //var getData = myContract.passAddress.getData([address1,address2,address3]);
+              
       if(this.state.isToWhitelist === "allow"){
-      
+        //self.inAddressArray = this.state.kycAddresses.split(",");
         await this.instanceKycContract.methods.setKycWhitelisted(this.state.kycAddress).send({from: this.accounts[0]})
         .on('transactionHash', function(hash){
           document.getElementById("transactionHash").innerHTML = hash;
@@ -147,20 +149,24 @@ class App extends Component {
           //slice returned error to get only message inside
           var errorMessage = JSON.parse(error.message.slice(58, error.message.length-2));
           self.handleError(errorMessage.data.message);
-        });
+        });        
         
-      }
+      };
     } catch (error) {
         this.handleError(error);
     }
   }
 
 handleError = (_errorMessage) =>{
-  document.getElementById("error").innerHTML = _errorMessage;
-  this.setState({errorMessage: _errorMessage});
+  try {
+    document.getElementById("error").innerHTML = _errorMessage;
+    this.setState({errorMessage: _errorMessage});
+  } catch (error) {
+    this.setState({errorMessage: error});
+  }  
 }
 
- addTokenToMetamask = async () =>{
+addTokenToMetamask = async () =>{
     try {
       const symbol = await this.instanceMyToken.methods.symbol().call();
       const decimals = await this.instanceMyToken.methods.decimals().call();
@@ -172,7 +178,7 @@ handleError = (_errorMessage) =>{
           options: {
             address: this.instanceMyToken._address,
             symbol: symbol,
-            decimals: 0.1,
+            decimals: decimals,
             image: 'https://www.cafefacil.com.br/media/product/383/capsula-nescafe-dolce-gusto-cappuccino-16-capsulas-nestle-020.jpg'
           }
         }
@@ -218,6 +224,11 @@ handleError = (_errorMessage) =>{
                   <div className="cut"></div>
                   <label className="placeholder">Address (0x123...)</label>
                 </div>
+                {/* <div className="input-container ic2">
+                  <textarea className="input" type="text" placeholder=""  name="kycAddresses" value={this.state.kycAddresses} onChange={this.handleInputChange} />
+                  <div className="cut"></div>
+                  <label className="placeholder">Addresses (0x123, 0x456, 0x567)</label>
+                </div> */}
                 <button type="button" className="submit" onClick={this.handleKycWhiteListing}>Update KYC Whitelist</button>
               </div>
                

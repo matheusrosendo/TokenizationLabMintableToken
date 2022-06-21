@@ -4223,6 +4223,32 @@
     "version": "0.8.15+commit.e14f2714.Emscripten.clang"
   },
   "networks": {
+    "1337": {
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xa22eAA4328e30174206611487eeC8BD8AF0F6eAd",
+      "transactionHash": "0xb4c9ee5b546686b656d3b30d55afa48a8fe384278121fd3fbfcc4c8b69bdee57"
+    },
     "5777": {
       "events": {},
       "links": {},
@@ -4231,7 +4257,7 @@
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-06-19T21:57:11.642Z",
+  "updatedAt": "2022-06-21T01:23:07.292Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
