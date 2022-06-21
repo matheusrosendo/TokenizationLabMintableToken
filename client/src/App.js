@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import MyToken from "./contracts/MyToken.json";
-import MyTokenSale from "./contracts/MyTokenSale.json";
+import MyMintableToken from "./contracts/MyMintableToken.json";
+import MyMintableTokenSale from "./contracts/MyMintableTokenSale.json";
 import KycContract from "./contracts/KycContract.json";
 import getWeb3 from "./getWeb3";
 
 import "./App.css";
 
 class App extends Component {
-  state = { loaded: false, contractOwner: false, whitelisted: false, kycAddress:"", ethAmountToBuyToken:1000, ethAccountAmmount:0, cappuAccountAmmount:0, isToWhitelist: "allow", errorMessage: ""};
+  state = { loaded: false, contractOwner: false, whitelisted: false, kycAddress:"", ethAmountToBuyToken:1000, ethAccountAmmount:0, cappuAccountAmmount:0, isToWhitelist: "allow", errorMessage: "", mochaTotalSupply: 0};
 
   //put the instance in a window to be acessed externaly
   constructor(props) {
@@ -27,14 +27,14 @@ class App extends Component {
       this.networkId = await this.web3.eth.net.getId();
       
       //get the contract instances
-      this.instanceMyToken = new this.web3.eth.Contract(
-        MyToken.abi,
-        MyToken.networks[this.networkId] && MyToken.networks[this.networkId].address,
+      this.instanceMyMintableToken = new this.web3.eth.Contract(
+        MyMintableToken.abi,
+        MyMintableToken.networks[this.networkId] && MyMintableToken.networks[this.networkId].address,
       );
 
-      this.instanceMyTokenSale = new this.web3.eth.Contract(
-        MyTokenSale.abi,
-        MyTokenSale.networks[this.networkId] && MyTokenSale.networks[this.networkId].address,
+      this.instanceMyMintableTokenSale = new this.web3.eth.Contract(
+        MyMintableTokenSale.abi,
+        MyMintableTokenSale.networks[this.networkId] && MyMintableTokenSale.networks[this.networkId].address,
       );
       
       
@@ -49,7 +49,7 @@ class App extends Component {
       //verify if current address is whitelisted
       this.isWhitelisted = await this.instanceKycContract.methods.kycWhitelisted(this.accounts[0]).call();
       
-      //takes the balances on loading page
+      //get the balances on loading page
       await this.updateUserTokens();
 
       //refresh balances every event Transfer
@@ -82,7 +82,7 @@ class App extends Component {
  handleBuyToken = async () => {
     //in order to get global access inside the callback function 
     let self = this;
-    await this.web3.eth.sendTransaction({from:this.accounts[0], to:this.instanceMyTokenSale._address, value:this.state.ethAmountToBuyToken})
+    await this.web3.eth.sendTransaction({from:this.accounts[0], to:this.instanceMyMintableTokenSale._address, value:this.state.ethAmountToBuyToken})
     .on('transactionHash', function(hash){
       document.getElementById("transactionHash").innerHTML = hash;
     })
@@ -177,18 +177,18 @@ handleError = (_errorMessage) =>{
  */
 addTokenToMetamask = async () =>{
     try {
-      const symbol = await this.instanceMyToken.methods.symbol().call();
-      const decimals = await this.instanceMyToken.methods.decimals().call();
+      const symbol = await this.instanceMyMintableToken.methods.symbol().call();
+      const decimals = await this.instanceMyMintableToken.methods.decimals().call();
       console.log("decimals "+decimals);
       const tokenAdded = await window.ethereum.request({
         method: 'wallet_watchAsset',
         params: {
           type: 'ERC20',
           options: {
-            address: this.instanceMyToken._address,
+            address: this.instanceMyMintableToken._address,
             symbol: symbol,
             decimals: decimals,
-            image: 'https://www.cafefacil.com.br/media/product/383/capsula-nescafe-dolce-gusto-cappuccino-16-capsulas-nestle-020.jpg'
+            image: 'https://www.starbucksathome.com/pt/sites/default/files/2021-06/10032021_CafeMocha_CS-min.png'
           }
         }
       });
@@ -203,24 +203,26 @@ addTokenToMetamask = async () =>{
  }
 
  /**
-  * Refresh balances of ETH and CAPPU tokens and set to state
+  * Refresh balances of ETH and MOCHA tokens and set to state
   */
  updateUserTokens = async () => {
-  let inCappuAccountAmmount = await this.instanceMyToken.methods.balanceOf(this.accounts[0]).call();
+  let inMochaAccountAmmount = await this.instanceMyMintableToken.methods.balanceOf(this.accounts[0]).call();
   let inEthAccountAmmount = this.web3.utils.fromWei(await this.web3.eth.getBalance(this.accounts[0]), 'ether'); 
+  let inMochaTotalSupply = await this.instanceMyMintableToken.methods.totalSupply().call();
   let inEthAccountAmmountInString = "0.0";
   if(inEthAccountAmmount > 0) {
     inEthAccountAmmountInString = inEthAccountAmmount.substring(0,5);
   }
-  this.setState({ ethAccountAmmount:inEthAccountAmmountInString, cappuAccountAmmount: inCappuAccountAmmount});
+  this.setState({ ethAccountAmmount:inEthAccountAmmountInString, cappuAccountAmmount: inMochaAccountAmmount, mochaTotalSupply: inMochaTotalSupply});
  }
+
 
  /**
   * Refresh balances every time event Transfer is listened sendind from or to the current address 
   */
  listenToTokenTransfer = async() => {
-   this.instanceMyToken.events.Transfer({to: this.accounts[0]}).on("data", this.updateUserTokens);
-   this.instanceMyToken.events.Transfer({from: this.accounts[0]}).on("data", this.updateUserTokens);
+   this.instanceMyMintableToken.events.Transfer({to: this.accounts[0]}).on("data", this.updateUserTokens);
+   this.instanceMyMintableToken.events.Transfer({from: this.accounts[0]}).on("data", this.updateUserTokens);
  }
 
   render() {
@@ -235,11 +237,12 @@ addTokenToMetamask = async () =>{
       if(this.state.contractOwner){
         return (
           <div>
-           <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / CAPPU: {this.state.cappuAccountAmmount} </div>
+           <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / MOCHA: {this.state.cappuAccountAmmount} </div>
             <div className="container"> 
              
               <div className="form">              
-                <div className="title">StarDucks Cappucino IDO</div>
+                <div className="subtitle2">Current TOTAL SUPPLY = {this.state.mochaTotalSupply} MOCHA Tokens</div>
+                <div className="title">StarDucks Mochacino IDO (Mintable Tokens)</div>
                 <div className="subtitle">Welcome manager! This is your Kyc Whitelisting page.</div>
                 <div className="input-container ic1">
                   <input id="allowAddress"  type="radio" placeholder=" " checked  name="isToWhitelist" value="allow" onChange={this.handleInputChange} />
@@ -271,10 +274,11 @@ addTokenToMetamask = async () =>{
         if(this.state.whitelisted){
             return (
               <div>
-                <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / CAPPU: {this.state.cappuAccountAmmount} </div>
+                <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / MOCHA: {this.state.cappuAccountAmmount} </div>
                 <div className="container"> 
                   <div className="form2">
-                    <div className="title">StarDucks Cappucino IDO</div>
+                    <div className="subtitle2">Current TOTAL SUPPLY = {this.state.mochaTotalSupply} MOCHA Tokens</div>
+                    <div className="title">StarDucks Mochacino IDO (Mintable Tokens)</div>
                     <div className="subtitle">You are whitelisted!</div>
                
                     <div className="input-container ic1">
@@ -283,8 +287,8 @@ addTokenToMetamask = async () =>{
                       <label className="placeholder">ETH amount in wei</label>
                     </div>                    
                     <p>
-                      <button type="button"  className="submit" onClick={this.handleBuyToken}> Buy CAPPU Token</button>
-                      <button type="button"  id="addToken"  className="submit" onClick={this.addTokenToMetamask}> Add CAPPU Token to metamask wallet</button>
+                      <button type="button"  className="submit" onClick={this.handleBuyToken}> Buy MOCHA Token</button>
+                      <button type="button"  id="addToken"  className="submit" onClick={this.addTokenToMetamask}> Add MOCHA Token to metamask wallet</button>
                     </p>                    
                   </div>  
                   <div className="warning" id="infoMessage"></div>
@@ -298,10 +302,10 @@ addTokenToMetamask = async () =>{
         } else {
           return (
             <div>
-              <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / CAPPU: {this.state.cappuAccountAmmount} </div>
+              <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / MOCHA: {this.state.cappuAccountAmmount} </div>
               <div className="container"> 
                 <div className="form2">
-                  <div className="title">StarDucks Cappucino IDO</div>
+                  <div className="title">StarDucks Mochacino IDO</div>
                   <div className="subtitle">Sorry, you are not whitelisted!</div>
                 </div>
               </div>
