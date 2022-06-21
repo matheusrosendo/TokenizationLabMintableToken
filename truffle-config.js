@@ -24,9 +24,15 @@ module.exports = {
       },
       network_id: "1337"
     },
+    goerli_infura: {
+      provider: function() {
+        return new HDWalletProvider(process.env.MNEMONIC, process.env.INFURA_GOERLI_URL, AccountIndex)
+      },
+      network_id: "5"
+    },
     ropsten_infura: {
       provider: function() {
-        return new HDWalletProvider(process.env.MNEMONIC, "https://ropsten.infura.io/v3/2b87a1cd9a75478288b5a54b40c62cdc", AccountIndex)
+        return new HDWalletProvider(process.env.MNEMONIC, process.env.INFURA_ROPSTEN_URL, AccountIndex)
       },
       network_id: "3"
     }
@@ -35,5 +41,9 @@ module.exports = {
     solc: {
       version: "^0.8.0"
     }
+  }, 
+  mocha: {
+      enableTimeouts: false,
+      before_timeout: 2400000 // Here is 40min but can be whatever timeout is suitable for you.
   }
 };
