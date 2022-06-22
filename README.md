@@ -1,6 +1,6 @@
 # TokenizationLab
 
-Livetest: url
+Livetest: url nova
 
 Blockchain Dapp Prototype - Tokenization Lab - Third Lab of the course https://www.udemy.com/course/blockchain-developer/
 
