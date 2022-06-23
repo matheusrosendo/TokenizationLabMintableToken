@@ -7,7 +7,7 @@ import getWeb3 from "./getWeb3";
 import "./App.css";
 
 class App extends Component {
-  state = { loaded: false, contractOwner: false, whitelisted: false, kycAddress:"", ethAmountToBuyToken:1000, ethAccountAmmount:0, cappuAccountAmmount:0, isToWhitelist: "allow", errorMessage: "", mochaTotalSupply: 0, wrongNetworkError:"Loading Web3, accounts, and contract..."};
+  state = { loaded: false, contractOwner: false, whitelisted: false, kycAddress:"", ethAmountToBuyToken:1000, ethAccountAmmount:0, mochaAccountAmmount:0, isToWhitelist: "allow", errorMessage: "", mochaTotalSupply: 0, wrongNetworkError:"Loading Web3, accounts, and contract..."};
   labels = {
     title:"StarDucks Mochacino IDO", 
     title2:"A Mintable Token Example", 
@@ -69,6 +69,7 @@ class App extends Component {
         'Failed to load web3, accounts, or contract. Check console for details. Error: '+error.message
       );
       this.handleError(error);
+      this.setState({wrongNetworkError: "You need to choose the correct network: Ropsten, Goerli or Local Ganache"});
     }
   };
 
@@ -221,7 +222,7 @@ addTokenToMetamask = async () =>{
   if(inEthAccountAmmount > 0) {
     inEthAccountAmmountInString = inEthAccountAmmount.substring(0,5);
   }
-  this.setState({ ethAccountAmmount:inEthAccountAmmountInString, cappuAccountAmmount: inMochaAccountAmmount, mochaTotalSupply: inMochaTotalSupply});
+  this.setState({ ethAccountAmmount:inEthAccountAmmountInString, mochaAccountAmmount: inMochaAccountAmmount, mochaTotalSupply: inMochaTotalSupply});
  }
 
 
@@ -247,7 +248,7 @@ addTokenToMetamask = async () =>{
       if(this.state.contractOwner){
         return (
           <div>
-           <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / MOCHA: {this.state.cappuAccountAmmount} </div>
+           <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / MOCHA: {this.state.mochaAccountAmmount} </div>
             <div className="container"> 
              
               <div className="form">              
@@ -284,7 +285,7 @@ addTokenToMetamask = async () =>{
         if(this.state.whitelisted){
             return (
               <div>
-                <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / MOCHA: {this.state.cappuAccountAmmount} </div>
+                <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / MOCHA: {this.state.mochaAccountAmmount} </div>
                 <div className="container"> 
                   <div className="form2">
                     <div className="title">{this.labels.title}</div>
@@ -312,7 +313,7 @@ addTokenToMetamask = async () =>{
         } else {
           return (
             <div>
-              <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / MOCHA: {this.state.cappuAccountAmmount} </div>
+              <div  className="plaintext">connected account: {this.accounts[0]}  --- ETH: {this.state.ethAccountAmmount} / MOCHA: {this.state.mochaAccountAmmount} </div>
               <div className="container"> 
                 <div className="form2">
                 <div className="title">{this.labels.title}</div>

@@ -5,6 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./ERC20Mintable.sol";
 
 contract MyMintableToken is ERC20, ERC20Mintable  {
-    constructor() ERC20("StarDucks Cappucino Token", "MOCHA") {
+    constructor() ERC20("StarDucks Mochacino Token", "MOCHA") {
     }
 }
