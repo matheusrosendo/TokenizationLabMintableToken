@@ -16,8 +16,7 @@ contract MyMintableTokenSale is MintedCrowdsale {
         IERC20 token,
         KycContract _kyc
     )
-        MintedCrowdsale()
-        MyCrowdSale(rate, wallet, token)
+        MintedCrowdsale(rate, wallet, token)        
     {
         kyc = _kyc;
         owner = msg.sender;

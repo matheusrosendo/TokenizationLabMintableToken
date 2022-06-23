@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./MyCrowdsale.sol";
+import "./MyMintableCrowdSale.sol";
 import "./ERC20Mintable.sol";
 
 /**
@@ -10,7 +10,7 @@ import "./ERC20Mintable.sol";
  * @dev Extension of Crowdsale contract whose tokens are minted in each purchase.
  * Token ownership should be transferred to MintedCrowdsale for minting.
  */
-abstract contract MintedCrowdsale is MyCrowdSale {
+contract MintedCrowdsale is MyMintableCrowdSale {
     /**
      * @dev Overrides delivery by minting tokens upon purchase.
      * @param beneficiary Token purchaser
@@ -23,4 +23,9 @@ abstract contract MintedCrowdsale is MyCrowdSale {
                 "MintedCrowdsale: minting failed"
         );
     }
+
+    constructor (uint256 _inRate, address payable _inWallet, IERC20 _inToken)  MyMintableCrowdSale(_inRate, _inWallet, _inToken) {
+        
+    }
+   
 }

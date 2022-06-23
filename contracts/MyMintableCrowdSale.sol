@@ -20,7 +20,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
  * the methods to add functionality. Consider using 'super' where appropriate to concatenate
  * behavior.
  */
-contract MyCrowdSale is Context, ReentrancyGuard {
+abstract contract MyMintableCrowdSale is Context, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
