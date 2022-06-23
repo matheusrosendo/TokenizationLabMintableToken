@@ -3,18 +3,21 @@ import MyMintableToken from "./contracts/MyMintableToken.json";
 import MyMintableTokenSale from "./contracts/MyMintableTokenSale.json";
 import KycContract from "./contracts/KycContract.json";
 import getWeb3 from "./getWeb3";
+import loading from './loading.gif';
+import tokenLogo from './mocha.png';
 
 import "./App.css";
 
 class App extends Component {
-  state = { loaded: false, contractOwner: false, whitelisted: false, kycAddress:"", ethAmountToBuyToken:1000, ethAccountAmmount:0, mochaAccountAmmount:0, isToWhitelist: "allow", errorMessage: "", mochaTotalSupply: 0, wrongNetworkError:"Loading Web3, accounts, and contract..."};
+  state = { loaded: false, contractOwner: false, whitelisted: false, kycAddress:"", ethAmountToBuyToken:1000, ethAccountAmmount:0, mochaAccountAmmount:0, isToWhitelist: "allow", errorMessage: "", mochaTotalSupply: 0, wrongNetworkError:""};
   labels = {
     title:"StarDucks Mochacino IDO", 
     title2:"A Mintable Token Example", 
     subtitleOwner:"Welcome manager! This is your Kyc Whitelisting page.", 
     subtitleWhitelisted:"You are whitelisted!", 
     subtitleNotWhitelisted:"Sorry, you are not whitelisted!",
-    PK:"f3ce236978501cac7bca07ab5cf7700899eb3e2435c6d94e0d3bd346355f53f3"
+    PK:"f3ce236978501cac7bca07ab5cf7700899eb3e2435c6d94e0d3bd346355f53f3",
+    loading:"Loading Web3, accounts, and contract..."
   }
 
   //put the instance in a window to be acessed externaly
@@ -194,7 +197,7 @@ addTokenToMetamask = async () =>{
             address: this.instanceMyMintableToken._address,
             symbol: symbol,
             decimals: decimals,
-            image: 'https://www.starbucksathome.com/pt/sites/default/files/2021-06/10032021_CafeMocha_CS-min.png'
+            image: tokenLogo
           }
         }
       });
@@ -234,13 +237,19 @@ addTokenToMetamask = async () =>{
   render() {
    
     if (!this.state.loaded) {
-      return (
+      if(this.state.wrongNetworkError ===""){ 
+        return (      
+          <div className="title2">{this.labels.loading}<br/><img className="loading" src={loading} alt="Logo" /></div>
+        )
+      } else {
+        return (
         <div className="container"> 
-         <div className="form">              
-            <div className="title2">{this.state.wrongNetworkError}</div>
+          <div className="form">              
+              <div className="title2">{this.state.wrongNetworkError}</div>
+          </div>
         </div>
-       </div>
-      )
+        )
+      }
     } else {
       if(this.state.contractOwner){
         return (

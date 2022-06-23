@@ -176,4 +176,6 @@ body{
   background-color: rgb(231, 203, 192);
 }
 
-
+.loading {
+  width: 200px;
+}
