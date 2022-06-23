@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/TokenizationLabMintableToken/static/css/main.de0b4a1a.chunk.css",
-    "main.js": "/TokenizationLabMintableToken/static/js/main.926726ba.chunk.js",
-    "main.js.map": "/TokenizationLabMintableToken/static/js/main.926726ba.chunk.js.map",
+    "main.js": "/TokenizationLabMintableToken/static/js/main.c56e5f7a.chunk.js",
+    "main.js.map": "/TokenizationLabMintableToken/static/js/main.c56e5f7a.chunk.js.map",
     "runtime-main.js": "/TokenizationLabMintableToken/static/js/runtime-main.5d29cddf.js",
     "runtime-main.js.map": "/TokenizationLabMintableToken/static/js/runtime-main.5d29cddf.js.map",
     "static/js/2.c87611a9.chunk.js": "/TokenizationLabMintableToken/static/js/2.c87611a9.chunk.js",
     "static/js/2.c87611a9.chunk.js.map": "/TokenizationLabMintableToken/static/js/2.c87611a9.chunk.js.map",
     "index.html": "/TokenizationLabMintableToken/index.html",
-    "precache-manifest.d08204bc65d07df128284306d3be6e4b.js": "/TokenizationLabMintableToken/precache-manifest.d08204bc65d07df128284306d3be6e4b.js",
+    "precache-manifest.5c51b5a273dbe723c114ad48afb1fbae.js": "/TokenizationLabMintableToken/precache-manifest.5c51b5a273dbe723c114ad48afb1fbae.js",
     "service-worker.js": "/TokenizationLabMintableToken/service-worker.js",
     "static/css/main.de0b4a1a.chunk.css.map": "/TokenizationLabMintableToken/static/css/main.de0b4a1a.chunk.css.map",
     "static/media/loading.gif": "/TokenizationLabMintableToken/static/media/loading.0f8c7134.gif"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.5d29cddf.js",
     "static/js/2.c87611a9.chunk.js",
     "static/css/main.de0b4a1a.chunk.css",
-    "static/js/main.926726ba.chunk.js"
+    "static/js/main.c56e5f7a.chunk.js"
   ]
 }
