@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b969b0edd6b4f3ccc87ee3f47211423d",
+    "revision": "abb1dd8766a94d82a8c763a09788786c",
     "url": "/TokenizationLabMintableToken/index.html"
   },
   {
