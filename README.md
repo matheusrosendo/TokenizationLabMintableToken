@@ -2,8 +2,8 @@
 ![Licence](https://img.shields.io/github/license/matheusrosendo/TokenizationLabMintableToken)
 
 ## Screenshots
-![alt text](https://github.com/matheusrosendo/TokenizationLabFixedSupply/blob/main/client/public/mocha_kyc.png)
-![alt text](https://github.com/matheusrosendo/TokenizationLabFixedSupply/blob/main/client/public/mocha_buy.png)
+![alt text](https://github.com/matheusrosendo/TokenizationLabMintableToken/blob/main/client/public/mocha_kyc.png)
+![alt text](https://github.com/matheusrosendo/TokenizationLabMintableToken/blob/main/client/public/mocha_buy.png)
 
 ## Live testnet 
 https://matheusrosendo.github.io/TokenizationLabMintableToken
