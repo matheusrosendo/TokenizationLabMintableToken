@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "abb1dd8766a94d82a8c763a09788786c",
+    "revision": "e49e5c9b6cbc6f0ab4c59269ec57c92a",
     "url": "/TokenizationLabMintableToken/index.html"
   },
   {
-    "revision": "59f0a78e80aaa1768ee3",
+    "revision": "3da6f33b6bce5fae7382",
     "url": "/TokenizationLabMintableToken/static/css/main.072a7f6a.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/TokenizationLabMintableToken/static/js/2.b2d58d2a.chunk.js"
   },
   {
-    "revision": "59f0a78e80aaa1768ee3",
-    "url": "/TokenizationLabMintableToken/static/js/main.f1fd1fbc.chunk.js"
+    "revision": "3da6f33b6bce5fae7382",
+    "url": "/TokenizationLabMintableToken/static/js/main.04e334ba.chunk.js"
   },
   {
     "revision": "f04e2e73b816a4adbae0",
