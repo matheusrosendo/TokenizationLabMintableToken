@@ -255,6 +255,7 @@ addTokenToMetamask = async () =>{
                 <div className="title">{this.labels.title}</div>
                 <div className="title2">{this.labels.title2}</div>
                 <div className="subtitle">{this.labels.subtitleOwner}</div>
+                <div className="subtitle">Minted Tokens: {this.state.mochaTotalSupply}</div>
                 <div className="input-container ic1">
                   <input id="allowAddress"  type="radio" placeholder=" " checked  name="isToWhitelist" value="allow" onChange={this.handleInputChange} />
                   <label for="allowAddress" className="radioLabel">Allow Address</label>
@@ -291,6 +292,7 @@ addTokenToMetamask = async () =>{
                     <div className="title">{this.labels.title}</div>
                     <div className="title2">{this.labels.title2}</div>
                     <div className="subtitle">{this.labels.subtitleWhitelisted}</div>
+                    <div className="subtitle">Minted Tokens: {this.state.mochaTotalSupply}</div>
                
                     <div className="input-container ic1">
                       <input id="firstname" className="input" type="text" placeholder="" name="ethAmountToBuyToken" value={this.state.ethAmountToBuyToken} onChange={this.handleInputChange} />
