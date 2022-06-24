@@ -9,7 +9,7 @@
 ## Live testnet 
 * Import an account using this PK in your metamask: f3ce236978501cac7bca07ab5cf7700899eb3e2435c6d94e0d3bd346355f53f3
 * Connect to Ropsten testnet
-* Access https://matheusrosendo.github.io/TokenizationLabFixedSupply
+* Access https://matheusrosendo.github.io/TokenizationLabMintableToken
 
 ## Overview
 Blockchain Dapp Prototype - Tokenization Lab Mintable Token - Based on pratical lab of the course https://www.udemy.com/course/blockchain-developer/
